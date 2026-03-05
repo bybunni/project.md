@@ -244,7 +244,7 @@ app.patch('/api/project/kanban/move', (req, res) => {
 app.patch('/api/project/kanban/:id', (req, res) => {
   try {
     const { id } = req.params;
-    const { title, milestone, done } = req.body;
+    const { title, milestone, done, assignee } = req.body;
     const data = mutateProject((d) => {
       let task = null;
       for (const col of d.kanban.columns) {
@@ -255,6 +255,7 @@ app.patch('/api/project/kanban/:id', (req, res) => {
       if (title !== undefined) task.title = title;
       if (milestone !== undefined) task.milestone = milestone;
       if (done !== undefined) task.done = done;
+      if (assignee !== undefined) task.assignee = assignee || null;
     });
     res.json(data);
   } catch (err) {
@@ -265,11 +266,11 @@ app.patch('/api/project/kanban/:id', (req, res) => {
 // POST /api/project/kanban - add task
 app.post('/api/project/kanban', (req, res) => {
   try {
-    const { column, id, title, milestone, done } = req.body;
+    const { column, id, title, milestone, done, assignee } = req.body;
     const data = mutateProject((d) => {
       const col = d.kanban.columns.find((c) => c.name === column);
       if (!col) throw new Error(`Column not found: ${column}`);
-      col.tasks.push({ id, title, milestone, done: !!done });
+      col.tasks.push({ id, title, milestone, done: !!done, assignee: assignee || null });
     });
     res.json(data);
   } catch (err) {
@@ -303,13 +304,14 @@ app.delete('/api/project/kanban/:id', (req, res) => {
 app.patch('/api/project/todos/:index', (req, res) => {
   try {
     const index = parseInt(req.params.index, 10);
-    const { text, done } = req.body;
+    const { text, done, assignee } = req.body;
     const data = mutateProject((d) => {
       if (index < 0 || index >= d.todos.items.length) {
         throw new Error(`Todo index out of range: ${index}`);
       }
       if (text !== undefined) d.todos.items[index].text = text;
       if (done !== undefined) d.todos.items[index].done = done;
+      if (assignee !== undefined) d.todos.items[index].assignee = assignee || null;
     });
     res.json(data);
   } catch (err) {
@@ -320,9 +322,9 @@ app.patch('/api/project/todos/:index', (req, res) => {
 // POST /api/project/todos - add todo
 app.post('/api/project/todos', (req, res) => {
   try {
-    const { text, done } = req.body;
+    const { text, done, assignee } = req.body;
     const data = mutateProject((d) => {
-      d.todos.items.push({ text, done: !!done });
+      d.todos.items.push({ text, done: !!done, assignee: assignee || null });
     });
     res.json(data);
   } catch (err) {

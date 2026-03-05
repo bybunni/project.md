@@ -53,9 +53,9 @@ describe('Parse kanban', () => {
 
   it('parses task fields correctly', () => {
     const task = data.kanban.columns[0].tasks[0];
-    assert.strictEqual(task.id, 'WR-06');
-    assert.strictEqual(task.title, 'Write copy for landing page');
-    assert.strictEqual(task.milestone, 'M2');
+    assert.strictEqual(task.id, 'WR-07');
+    assert.strictEqual(task.title, 'Set up analytics integration');
+    assert.strictEqual(task.milestone, 'M3');
     assert.strictEqual(task.done, false);
   });
 
@@ -65,6 +65,17 @@ describe('Parse kanban', () => {
     for (const task of doneColumn.tasks) {
       assert.strictEqual(task.done, true);
     }
+  });
+
+  it('parses kanban task with assignee', () => {
+    const task = data.kanban.columns[0].tasks[0]; // WR-07 in "Backlog"
+    assert.strictEqual(task.id, 'WR-07');
+    assert.strictEqual(task.assignee, 'alex.smith');
+  });
+
+  it('parses kanban task without assignee as null', () => {
+    const task = data.kanban.columns[0].tasks[1]; // WR-08 in "Backlog"
+    assert.strictEqual(task.assignee, null);
   });
 });
 
@@ -80,5 +91,15 @@ describe('Parse todos', () => {
   it('parses done states correctly', () => {
     const doneStates = data.todos.items.map(i => i.done);
     assert.deepStrictEqual(doneStates, [false, false, true, false]);
+  });
+
+  it('parses todo with assignee', () => {
+    const item = data.todos.items[0]; // "Schedule kickoff meeting..."
+    assert.strictEqual(item.assignee, 'john.doe');
+  });
+
+  it('parses todo without assignee as null', () => {
+    const item = data.todos.items[2]; // "Create shared Drive folder"
+    assert.strictEqual(item.assignee, null);
   });
 });

@@ -7,7 +7,10 @@
 
   let editingIndex = -1;
   let editValue = '';
+  let editingAssigneeIndex = -1;
+  let assigneeValue = '';
   let newTodoText = '';
+  let newTodoAssignee = '';
 
   async function toggleDone(index, currentDone) {
     await updateTodo(index, { done: !currentDone });
@@ -32,6 +35,27 @@
     }
   }
 
+  function startEditAssignee(index, assignee) {
+    editingAssigneeIndex = index;
+    assigneeValue = assignee || '';
+  }
+
+  async function saveAssignee(index) {
+    if (editingAssigneeIndex === -1) return;
+    editingAssigneeIndex = -1;
+    const newVal = assigneeValue.trim() || null;
+    await updateTodo(index, { assignee: newVal });
+    dispatch('change');
+  }
+
+  function handleAssigneeKeydown(e, index) {
+    if (e.key === 'Enter') {
+      e.target.blur();
+    } else if (e.key === 'Escape') {
+      editingAssigneeIndex = -1;
+    }
+  }
+
   async function handleDelete(index) {
     await deleteTodo(index);
     dispatch('change');
@@ -39,8 +63,11 @@
 
   async function handleAdd() {
     if (!newTodoText.trim()) return;
-    await addTodo({ text: newTodoText.trim(), done: false });
+    const payload = { text: newTodoText.trim(), done: false };
+    if (newTodoAssignee.trim()) payload.assignee = newTodoAssignee.trim();
+    await addTodo(payload);
     newTodoText = '';
+    newTodoAssignee = '';
     dispatch('change');
   }
 
@@ -88,6 +115,39 @@
           </span>
         {/if}
 
+        {#if editingAssigneeIndex === index}
+          <input
+            class="assignee-input"
+            type="text"
+            bind:value={assigneeValue}
+            on:blur={() => saveAssignee(index)}
+            on:keydown={(e) => handleAssigneeKeydown(e, index)}
+            autofocus
+            placeholder="person.name"
+          />
+        {:else if item.assignee}
+          <span
+            class="assignee-badge"
+            on:click={() => startEditAssignee(index, item.assignee)}
+            on:keydown={() => {}}
+            role="button"
+            tabindex="0"
+            title="Click to edit assignee"
+          >
+            @{item.assignee}
+          </span>
+        {:else}
+          <span
+            class="add-assignee"
+            on:click={() => startEditAssignee(index, '')}
+            on:keydown={() => {}}
+            role="button"
+            tabindex="0"
+          >
+            + assign
+          </span>
+        {/if}
+
         <button
           class="delete-btn"
           on:click={() => handleDelete(index)}
@@ -105,6 +165,13 @@
       type="text"
       placeholder="Add a new todo..."
       bind:value={newTodoText}
+      on:keydown={handleKeydown}
+    />
+    <input
+      class="add-input assignee-add-input"
+      type="text"
+      placeholder="Assignee (optional)"
+      bind:value={newTodoAssignee}
       on:keydown={handleKeydown}
     />
     <button class="add-btn" on:click={handleAdd} disabled={!newTodoText.trim()}>
@@ -290,5 +357,56 @@
   .add-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .assignee-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #ede9fe;
+    color: #7c3aed;
+    padding: 1px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .assignee-badge:hover {
+    background: #ddd6fe;
+  }
+
+  .assignee-input {
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 1px 6px;
+    border: 1px solid #7c3aed;
+    border-radius: 3px;
+    outline: none;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+
+  .add-assignee {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.15s ease, opacity 0.15s ease;
+    opacity: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .todo-item:hover .add-assignee {
+    opacity: 1;
+  }
+
+  .add-assignee:hover {
+    color: #7c3aed;
+  }
+
+  .assignee-add-input {
+    max-width: 140px;
   }
 </style>

@@ -14,23 +14,22 @@
 
 ### Backlog
 
-- [ ] `WR-06` Write copy for landing page `M2`
-- [ ] `WR-07` Set up analytics integration `M3`
+- [ ] `WR-07` Set up analytics integration `M3` @alex.smith
 - [ ] `WR-08` Accessibility audit `M3`
+- [ ] `WR-06` Write copy for landing page `M2` @jane.doe
 
 ### In Progress
 
-- [ ] `WR-02` Design homepage mockup `M1`
-- [ ] `WR-04` Implement nav component `M2`
+- [ ] `WR-04` Implement nav component `M2` @bob.chen
 
 ### In Review
 
-- [ ] `WR-03` Define color palette and typography `M1`
+- [ ] `WR-03` Define color palette and typography `M1` @jane.doe
 
 ### Done
 
-- [x] `WR-01` Gather stakeholder requirements `M1`
-- [x] `WR-05` Set up repo and CI pipeline `M2`
+- [x] `WR-01` Gather stakeholder requirements `M1` @john.doe
+- [x] `WR-05` Set up repo and CI pipeline `M2` @alex.smith
 
 ---
 
@@ -62,7 +61,7 @@
 
 Quick tasks and reminders not tied to a kanban issue.
 
-- [ ] Schedule kickoff meeting with design team
-- [ ] Send brand guidelines PDF to contractor
+- [ ] Schedule kickoff meeting with design team @john.doe
+- [ ] Send brand guidelines PDF to contractor @jane.doe
 - [x] Create shared Drive folder
-- [ ] Book conference room for Friday review
+- [ ] Book conference room for Friday review @bob.chen

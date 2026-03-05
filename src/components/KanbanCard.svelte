@@ -5,8 +5,10 @@
 
   let editingTitle = false;
   let editingMilestone = false;
+  let editingAssignee = false;
   let titleValue = '';
   let milestoneValue = '';
+  let assigneeValue = '';
 
   function startEditTitle() {
     if (task.done) return;
@@ -47,6 +49,28 @@
       e.target.blur();
     } else if (e.key === 'Escape') {
       editingMilestone = false;
+    }
+  }
+
+  function startEditAssignee() {
+    if (task.done) return;
+    editingAssignee = true;
+    assigneeValue = task.assignee || '';
+  }
+
+  function saveAssignee() {
+    editingAssignee = false;
+    const newVal = assigneeValue.trim() || null;
+    if (newVal !== (task.assignee || null)) {
+      dispatch('update', { id: task.id, fields: { assignee: newVal } });
+    }
+  }
+
+  function handleAssigneeKeydown(e) {
+    if (e.key === 'Enter') {
+      e.target.blur();
+    } else if (e.key === 'Escape') {
+      editingAssignee = false;
     }
   }
 
@@ -103,33 +127,29 @@
     {/if}
   </div>
 
-  {#if task.milestone || editingMilestone}
-    <div class="card-footer">
-      {#if editingMilestone}
-        <input
-          class="inline-edit milestone-edit"
-          type="text"
-          bind:value={milestoneValue}
-          on:blur={saveMilestone}
-          on:keydown={handleMilestoneKeydown}
-          autofocus
-          placeholder="Milestone"
-        />
-      {:else}
-        <span
-          class="milestone-badge"
-          on:click={startEditMilestone}
-          on:keydown={(e) => e.key === 'Enter' && startEditMilestone()}
-          role="button"
-          tabindex="0"
-          title="Click to edit milestone"
-        >
-          {task.milestone}
-        </span>
-      {/if}
-    </div>
-  {:else}
-    <div class="card-footer">
+  <div class="card-footer">
+    {#if editingMilestone}
+      <input
+        class="inline-edit milestone-edit"
+        type="text"
+        bind:value={milestoneValue}
+        on:blur={saveMilestone}
+        on:keydown={handleMilestoneKeydown}
+        autofocus
+        placeholder="Milestone"
+      />
+    {:else if task.milestone}
+      <span
+        class="milestone-badge"
+        on:click={startEditMilestone}
+        on:keydown={(e) => e.key === 'Enter' && startEditMilestone()}
+        role="button"
+        tabindex="0"
+        title="Click to edit milestone"
+      >
+        {task.milestone}
+      </span>
+    {:else}
       <span
         class="add-milestone"
         on:click={startEditMilestone}
@@ -139,8 +159,41 @@
       >
         + milestone
       </span>
-    </div>
-  {/if}
+    {/if}
+
+    {#if editingAssignee}
+      <input
+        class="inline-edit assignee-edit"
+        type="text"
+        bind:value={assigneeValue}
+        on:blur={saveAssignee}
+        on:keydown={handleAssigneeKeydown}
+        autofocus
+        placeholder="person.name"
+      />
+    {:else if task.assignee}
+      <span
+        class="assignee-badge"
+        on:click={startEditAssignee}
+        on:keydown={(e) => e.key === 'Enter' && startEditAssignee()}
+        role="button"
+        tabindex="0"
+        title="Click to edit assignee"
+      >
+        @{task.assignee}
+      </span>
+    {:else}
+      <span
+        class="add-assignee"
+        on:click={startEditAssignee}
+        on:keydown={(e) => e.key === 'Enter' && startEditAssignee()}
+        role="button"
+        tabindex="0"
+      >
+        + assign
+      </span>
+    {/if}
+  </div>
 </div>
 
 <style>
@@ -303,5 +356,44 @@
 
   .add-milestone:hover {
     color: #3b82f6;
+  }
+
+  .assignee-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    background: #ede9fe;
+    color: #7c3aed;
+    padding: 2px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .assignee-badge:hover {
+    background: #ddd6fe;
+  }
+
+  .assignee-edit {
+    font-size: 12px;
+    padding: 2px 6px;
+    max-width: 100px;
+  }
+
+  .add-assignee {
+    font-size: 11px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    opacity: 0;
+  }
+
+  .kanban-card:hover .add-assignee {
+    opacity: 1;
+  }
+
+  .add-assignee:hover {
+    color: #7c3aed;
   }
 </style>

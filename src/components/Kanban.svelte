@@ -8,7 +8,7 @@
 
   let dragOverColumn = null;
   let addingTaskColumn = null;
-  let newTask = { id: '', title: '', milestone: '' };
+  let newTask = { id: '', title: '', milestone: '', assignee: '' };
   let editingColumnName = null;
   let columnNameValue = '';
   let showAddColumn = false;
@@ -54,13 +54,15 @@
 
   function cancelAddTask() {
     addingTaskColumn = null;
-    newTask = { id: '', title: '', milestone: '' };
+    newTask = { id: '', title: '', milestone: '', assignee: '' };
   }
 
   async function handleAddTask(columnName) {
     if (!newTask.id.trim() || !newTask.title.trim()) return;
-    await addTask({ ...newTask, column: columnName, done: false });
-    newTask = { id: '', title: '', milestone: '' };
+    const payload = { id: newTask.id, title: newTask.title, milestone: newTask.milestone, column: columnName, done: false };
+    if (newTask.assignee.trim()) payload.assignee = newTask.assignee.trim();
+    await addTask(payload);
+    newTask = { id: '', title: '', milestone: '', assignee: '' };
     addingTaskColumn = null;
     dispatch('change');
   }
@@ -201,6 +203,13 @@
                 bind:value={newTask.milestone}
                 on:keydown={(e) => handleAddTaskKeydown(e, column.name)}
                 placeholder="Milestone (optional)"
+              />
+              <input
+                class="add-task-input"
+                type="text"
+                bind:value={newTask.assignee}
+                on:keydown={(e) => handleAddTaskKeydown(e, column.name)}
+                placeholder="Assignee (optional)"
               />
               <div class="add-task-actions">
                 <button class="btn btn-primary" on:click={() => handleAddTask(column.name)}>
