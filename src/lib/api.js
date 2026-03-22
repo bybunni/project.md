@@ -1,101 +1,85 @@
+function getRuntime() {
+  if (!window.projectMd) {
+    throw new Error('project.md desktop bridge is unavailable');
+  }
+
+  return window.projectMd;
+}
+
 // Fetch full project data
 export async function fetchProject() {
-  const res = await fetch('/api/project');
-  return res.json();
+  return getRuntime().getProject();
+}
+
+// Open a project file via native OS dialog
+export async function openProject() {
+  return getRuntime().openProject();
+}
+
+// Check if a project is currently loaded
+export async function fetchStatus() {
+  return getRuntime().getStatus();
 }
 
 // Milestones
 export async function updateMilestone(id, fields) {
-  const res = await fetch(`/api/project/milestones/${id}`, {
-    method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(fields)
-  });
-  return res.json();
+  return getRuntime().updateMilestone(id, fields);
 }
 export async function addMilestone(milestone) {
-  const res = await fetch('/api/project/milestones', {
-    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(milestone)
-  });
-  return res.json();
+  return getRuntime().addMilestone(milestone);
 }
 export async function deleteMilestone(id) {
-  const res = await fetch(`/api/project/milestones/${id}`, { method: 'DELETE' });
-  return res.json();
+  return getRuntime().deleteMilestone(id);
 }
 
 // Kanban
 export async function moveTask(taskId, targetColumn, position) {
-  const res = await fetch('/api/project/kanban/move', {
-    method: 'PATCH', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ taskId, targetColumn, position })
-  });
-  return res.json();
+  return getRuntime().moveTask(taskId, targetColumn, position);
 }
 export async function updateTask(id, fields) {
-  const res = await fetch(`/api/project/kanban/${id}`, {
-    method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(fields)
-  });
-  return res.json();
+  return getRuntime().updateTask(id, fields);
 }
 export async function addTask(task) {
-  const res = await fetch('/api/project/kanban', {
-    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(task)
-  });
-  return res.json();
+  return getRuntime().addTask(task);
 }
 export async function deleteTask(id) {
-  const res = await fetch(`/api/project/kanban/${id}`, { method: 'DELETE' });
-  return res.json();
+  return getRuntime().deleteTask(id);
 }
 export async function addColumn(name) {
-  const res = await fetch('/api/project/kanban/columns', {
-    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name })
-  });
-  return res.json();
+  return getRuntime().addColumn(name);
 }
 export async function renameColumn(oldName, newName) {
-  const res = await fetch(`/api/project/kanban/columns/${encodeURIComponent(oldName)}`, {
-    method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: newName })
-  });
-  return res.json();
+  return getRuntime().renameColumn(oldName, newName);
 }
 export async function deleteColumn(name) {
-  const res = await fetch(`/api/project/kanban/columns/${encodeURIComponent(name)}`, { method: 'DELETE' });
-  return res.json();
+  return getRuntime().deleteColumn(name);
 }
 
 // Todos
 export async function updateTodo(index, fields) {
-  const res = await fetch(`/api/project/todos/${index}`, {
-    method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(fields)
-  });
-  return res.json();
+  return getRuntime().updateTodo(index, fields);
 }
 export async function addTodo(todo) {
-  const res = await fetch('/api/project/todos', {
-    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(todo)
-  });
-  return res.json();
+  return getRuntime().addTodo(todo);
 }
 export async function deleteTodo(index) {
-  const res = await fetch(`/api/project/todos/${index}`, { method: 'DELETE' });
-  return res.json();
+  return getRuntime().deleteTodo(index);
 }
 
 // Raw
 export async function fetchRaw() {
-  const res = await fetch('/api/project/raw');
-  return res.json();
+  return getRuntime().getRaw();
 }
 export async function saveRaw(content) {
-  const res = await fetch('/api/project/raw', {
-    method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content })
-  });
-  return res.json();
+  return getRuntime().saveRaw(content);
 }
 
-// SSE
+// Watch for external file changes
 export function listenForChanges(callback) {
-  const source = new EventSource('/api/events');
-  source.onmessage = () => callback();
-  return source;
+  const unsubscribe = getRuntime().subscribeToChanges(callback);
+  return {
+    close() {
+      unsubscribe();
+    },
+  };
 }

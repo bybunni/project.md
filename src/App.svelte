@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { fetchProject, listenForChanges } from './lib/api.js';
+  import { fetchProject, fetchStatus, openProject, listenForChanges } from './lib/api.js';
   import Milestones from './components/Milestones.svelte';
   import Kanban from './components/Kanban.svelte';
   import Calendar from './components/Calendar.svelte';
@@ -9,10 +9,54 @@
 
   let data = null;
   let error = null;
-  let activeTab = 'kanban';
+  let activeTab = 'dashboard';
   let eventSource;
+  let projectLoaded = false;
+  let filename = null;
+  let opening = false;
+
+  const defaultSectionOrder = ['todos', 'kanban', 'calendar', 'milestones'];
+  let sectionOrder = JSON.parse(localStorage.getItem('dashboardOrder') || 'null') || [...defaultSectionOrder];
+
+  let dragSrc = null;
+  let dragOver = null;
+
+  function onDragStart(e, id) {
+    dragSrc = id;
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function onDragOver(e, id) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    dragOver = id;
+  }
+
+  function onDragLeave() {
+    dragOver = null;
+  }
+
+  function onDrop(e, targetId) {
+    e.preventDefault();
+    if (dragSrc && dragSrc !== targetId) {
+      const fromIdx = sectionOrder.indexOf(dragSrc);
+      const toIdx = sectionOrder.indexOf(targetId);
+      sectionOrder.splice(fromIdx, 1);
+      sectionOrder.splice(toIdx, 0, dragSrc);
+      sectionOrder = sectionOrder;
+      localStorage.setItem('dashboardOrder', JSON.stringify(sectionOrder));
+    }
+    dragSrc = null;
+    dragOver = null;
+  }
+
+  function onDragEnd() {
+    dragSrc = null;
+    dragOver = null;
+  }
 
   const tabs = [
+    { id: 'dashboard', label: 'Dashboard' },
     { id: 'milestones', label: 'Milestones' },
     { id: 'kanban', label: 'Kanban' },
     { id: 'calendar', label: 'Calendar' },
@@ -29,9 +73,41 @@
     }
   }
 
-  onMount(() => {
-    loadData();
+  function connectSSE() {
+    if (eventSource) eventSource.close();
     eventSource = listenForChanges(() => loadData());
+  }
+
+  async function handleOpen() {
+    opening = true;
+    try {
+      const result = await openProject();
+      if (result.cancelled) return;
+      if (result.error) { error = result.error; return; }
+      projectLoaded = true;
+      filename = result.path ? result.path.split('/').pop() : null;
+      data = result.data;
+      error = null;
+      connectSSE();
+    } catch (e) {
+      error = e.message;
+    } finally {
+      opening = false;
+    }
+  }
+
+  onMount(async () => {
+    try {
+      const status = await fetchStatus();
+      if (status.loaded) {
+        projectLoaded = true;
+        filename = status.filename;
+        await loadData();
+        connectSSE();
+      }
+    } catch (e) {
+      error = e.message;
+    }
   });
 
   onDestroy(() => {
@@ -40,38 +116,88 @@
 </script>
 
 <main>
-  <header>
-    <h1>{data ? data.title : 'Loading...'}</h1>
-    <nav>
-      {#each tabs as tab}
-        <button
-          class:active={activeTab === tab.id}
-          on:click={() => activeTab = tab.id}
-        >
-          {tab.label}
+  {#if !projectLoaded}
+    <div class="landing">
+      <div class="landing-card">
+        <h1>project.md</h1>
+        <p>Open a markdown project file to get started.</p>
+        <button class="open-btn" on:click={handleOpen} disabled={opening}>
+          {opening ? 'Opening...' : 'Open Project'}
         </button>
-      {/each}
-    </nav>
-  </header>
-
-  {#if error}
-    <div class="error">Error: {error}</div>
-  {:else if !data}
-    <div class="loading">Loading...</div>
-  {:else}
-    <div class="content">
-      {#if activeTab === 'milestones'}
-        <Milestones milestones={data.milestones} kanban={data.kanban} on:change={loadData} />
-      {:else if activeTab === 'kanban'}
-        <Kanban kanban={data.kanban} on:change={loadData} />
-      {:else if activeTab === 'calendar'}
-        <Calendar milestones={data.milestones} on:navigate={(e) => { activeTab = 'milestones'; }} />
-      {:else if activeTab === 'todos'}
-        <Todos todos={data.todos} on:change={loadData} />
-      {:else if activeTab === 'raw'}
-        <RawEditor on:change={loadData} />
-      {/if}
+      </div>
     </div>
+  {:else}
+    <header>
+      <div class="header-row">
+        <div>
+          <h1>{data ? data.title : 'Loading...'}</h1>
+          {#if filename}
+            <span class="filename">{filename}</span>
+          {/if}
+        </div>
+        <button class="load-btn" on:click={handleOpen} disabled={opening}>
+          {opening ? 'Opening...' : 'Load File'}
+        </button>
+      </div>
+      <nav>
+        {#each tabs as tab}
+          <button
+            class:active={activeTab === tab.id}
+            on:click={() => activeTab = tab.id}
+          >
+            {tab.label}
+          </button>
+        {/each}
+      </nav>
+    </header>
+
+    {#if error}
+      <div class="error">Error: {error}</div>
+    {:else if !data}
+      <div class="loading">Loading...</div>
+    {:else}
+      <div class="content" class:dashboard={activeTab === 'dashboard'}>
+        {#if activeTab === 'dashboard'}
+          {#each sectionOrder as sectionId (sectionId)}
+            <section
+              class="dashboard-section"
+              class:drag-over={dragOver === sectionId}
+              draggable="true"
+              aria-label={sectionId === 'calendar' ? 'Calendar dashboard section' : sectionId === 'kanban' ? 'Kanban dashboard section' : sectionId === 'milestones' ? 'Milestones dashboard section' : 'Todos dashboard section'}
+              on:dragstart={(e) => onDragStart(e, sectionId)}
+              on:dragover={(e) => onDragOver(e, sectionId)}
+              on:dragleave={onDragLeave}
+              on:drop={(e) => onDrop(e, sectionId)}
+              on:dragend={onDragEnd}
+            >
+              <h2 class="drag-handle">
+                <span class="grip">⠿</span>
+                {sectionId === 'calendar' ? 'Calendar' : sectionId === 'kanban' ? 'Kanban' : sectionId === 'milestones' ? 'Milestones' : 'Todos'}
+              </h2>
+              {#if sectionId === 'calendar'}
+                <Calendar milestones={data.milestones} on:navigate={() => { activeTab = 'milestones'; }} />
+              {:else if sectionId === 'kanban'}
+                <Kanban kanban={data.kanban} on:change={loadData} />
+              {:else if sectionId === 'milestones'}
+                <Milestones milestones={data.milestones} kanban={data.kanban} on:change={loadData} />
+              {:else if sectionId === 'todos'}
+                <Todos todos={data.todos} on:change={loadData} />
+              {/if}
+            </section>
+          {/each}
+        {:else if activeTab === 'milestones'}
+          <Milestones milestones={data.milestones} kanban={data.kanban} on:change={loadData} />
+        {:else if activeTab === 'kanban'}
+          <Kanban kanban={data.kanban} on:change={loadData} />
+        {:else if activeTab === 'calendar'}
+          <Calendar milestones={data.milestones} on:navigate={(e) => { activeTab = 'milestones'; }} />
+        {:else if activeTab === 'todos'}
+          <Todos todos={data.todos} on:change={loadData} />
+        {:else if activeTab === 'raw'}
+          <RawEditor on:change={loadData} />
+        {/if}
+      </div>
+    {/if}
   {/if}
 </main>
 
@@ -91,13 +217,81 @@
     margin: 0 auto;
     padding: 20px;
   }
+  /* Landing screen */
+  .landing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+  }
+  .landing-card {
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    padding: 48px 64px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .landing-card h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+  }
+  .landing-card p {
+    color: #666;
+    margin-bottom: 24px;
+  }
+  .open-btn {
+    padding: 10px 24px;
+    font-size: 1rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .open-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  .open-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  /* Header */
   header {
     margin-bottom: 24px;
   }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
   h1 {
     font-size: 1.5rem;
-    margin-bottom: 16px;
     color: #1a1a1a;
+  }
+  .filename {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  .load-btn {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .load-btn:hover:not(:disabled) {
+    background: #e0e0e0;
+  }
+  .load-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
   nav {
     display: flex;
@@ -129,6 +323,44 @@
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .content.dashboard {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+  .dashboard-section {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    border: 2px solid transparent;
+  }
+  .dashboard-section.drag-over {
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.15);
+  }
+  .dashboard-section h2.drag-handle {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .dashboard-section h2.drag-handle:active {
+    cursor: grabbing;
+  }
+  .grip {
+    color: #bbb;
+    font-size: 1rem;
+    line-height: 1;
   }
   .error {
     background: #fef2f2;
