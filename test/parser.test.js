@@ -19,6 +19,12 @@ describe('Round-trip fidelity', () => {
     const result = serialize(data);
     assert.strictEqual(result, original);
   });
+
+  it('preserves CRLF line endings on round-trip', () => {
+    const windowsOriginal = original.replace(/\n/g, '\r\n');
+    const windowsResult = serialize(parse(windowsOriginal));
+    assert.strictEqual(windowsResult, windowsOriginal);
+  });
 });
 
 describe('Parse title', () => {
