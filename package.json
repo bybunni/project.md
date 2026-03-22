@@ -2,7 +2,14 @@
   "name": "project-md",
   "version": "1.0.0",
   "private": true,
+  "description": "Electron desktop app for managing a local project.md markdown file.",
+  "author": "bybunni",
   "type": "module",
+  "homepage": "https://github.com/bybunni/project.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bybunni/project.md.git"
+  },
   "main": "electron/main.js",
   "scripts": {
     "dev": "node scripts/dev.mjs",
@@ -24,6 +31,7 @@
   "build": {
     "appId": "com.projectmd.desktop",
     "productName": "project.md",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "directories": {
       "output": "release"
     },

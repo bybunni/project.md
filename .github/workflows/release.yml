@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create draft GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            echo "Release ${GITHUB_REF_NAME} already exists"
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --draft \
+              --title "${GITHUB_REF_NAME}" \
+              --generate-notes
+          fi
+
+  build-and-upload:
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            upload_glob: release/*.dmg release/*-mac.zip
+          - os: windows-latest
+            upload_glob: release/*.exe
+          - os: ubuntu-latest
+            upload_glob: release/*.AppImage
+
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build release artifacts
+        run: npm run build
+
+      - name: Upload release assets
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=( ${{ matrix.upload_glob }} )
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No release files matched: ${{ matrix.upload_glob }}"
+            exit 1
+          fi
+
+          gh release upload "${GITHUB_REF_NAME}" "${files[@]}" --clobber
