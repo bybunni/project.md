@@ -251,32 +251,33 @@
   }
 
   thead {
-    background: #f8f9fa;
+    background: var(--bg-surface-subtle);
   }
 
   th {
     text-align: left;
     padding: 10px 12px;
     font-weight: 600;
-    color: #4a5568;
+    color: var(--text-secondary);
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid var(--border-default);
   }
 
   td {
     padding: 8px 12px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-default);
     vertical-align: middle;
+    color: var(--text-primary);
   }
 
   tr.alt {
-    background: #f8fafc;
+    background: var(--bg-surface-subtle);
   }
 
   tbody tr:not(.add-row):hover {
-    background: #edf2f7;
+    background: var(--bg-surface-hover);
   }
 
   /* Column widths */
@@ -296,7 +297,7 @@
   }
 
   .editable:hover {
-    background: #e2e8f0;
+    background: var(--bg-surface-emphasis);
   }
 
   /* Status badges */
@@ -309,18 +310,18 @@
   }
 
   .status-not-started {
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--bg-surface-muted);
+    color: var(--text-muted);
   }
 
   .status-in-progress {
-    background: #eff6ff;
-    color: #2563eb;
+    background: var(--accent-soft);
+    color: var(--accent-soft-text);
   }
 
   .status-complete {
-    background: #f0fdf4;
-    color: #16a34a;
+    background: var(--success-soft);
+    color: var(--success-strong);
   }
 
   /* Inline inputs */
@@ -330,17 +331,18 @@
     padding: 4px 6px;
     font-size: 0.9rem;
     font-family: inherit;
-    border: 1px solid #93c5fd;
+    border: 1px solid var(--accent);
     border-radius: 3px;
     outline: none;
-    background: #fff;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .inline-input:focus,
   .inline-select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   /* Progress bar */
@@ -352,20 +354,20 @@
 
   .progress-text {
     font-size: 0.82rem;
-    color: #64748b;
+    color: var(--text-muted);
   }
 
   .progress-bar {
     width: 100%;
     height: 5px;
-    background: #e2e8f0;
+    background: var(--bg-surface-emphasis);
     border-radius: 3px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    background: #22c55e;
+    background: var(--success);
     border-radius: 3px;
     transition: width 0.3s ease;
   }
@@ -378,24 +380,24 @@
     border: 1px solid transparent;
     border-radius: 4px;
     background: none;
-    color: #94a3b8;
+    color: var(--text-faint);
     cursor: pointer;
     transition: all 0.15s;
   }
 
   .btn-delete:hover {
-    color: #dc2626;
-    background: #fef2f2;
-    border-color: #fecaca;
+    color: var(--danger-strong);
+    background: var(--danger-soft);
+    border-color: var(--danger-border);
   }
 
   /* Add row */
   .add-row {
-    background: #fefce8 !important;
+    background: var(--bg-surface-warning) !important;
   }
 
   .add-row:hover {
-    background: #fef9c3 !important;
+    background: var(--bg-surface-warning-hover) !important;
   }
 
   .add-input {
@@ -403,19 +405,20 @@
     padding: 4px 6px;
     font-size: 0.85rem;
     font-family: inherit;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--input-border);
     border-radius: 3px;
-    background: #fff;
+    background: var(--input-bg);
     outline: none;
+    color: var(--text-primary);
   }
 
   .add-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .add-input::placeholder {
-    color: #9ca3af;
+    color: var(--text-faint);
   }
 
   .btn-add {
@@ -424,18 +427,18 @@
     font-family: inherit;
     border: none;
     border-radius: 4px;
-    background: #2563eb;
-    color: #fff;
+    background: var(--accent);
+    color: var(--accent-contrast);
     cursor: pointer;
     font-weight: 500;
     transition: background 0.15s;
   }
 
   .btn-add:hover {
-    background: #1d4ed8;
+    background: var(--accent-hover);
   }
 
   .btn-add:active {
-    background: #1e40af;
+    background: var(--accent-hover);
   }
 </style>

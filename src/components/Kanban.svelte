@@ -279,7 +279,7 @@
 
   .kanban-column {
     flex: 0 0 280px;
-    background: #f1f5f9;
+    background: var(--bg-surface-muted);
     border-radius: 12px;
     border: 2px solid transparent;
     display: flex;
@@ -289,8 +289,8 @@
   }
 
   .kanban-column.drag-over {
-    border-color: #3b82f6;
-    background: #eff6ff;
+    border-color: var(--accent);
+    background: var(--bg-surface-info);
   }
 
   .column-header {
@@ -304,7 +304,7 @@
   .column-name {
     font-size: 14px;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-primary);
     cursor: pointer;
     flex: 1;
     letter-spacing: 0.01em;
@@ -312,32 +312,32 @@
   }
 
   .column-name:hover {
-    color: #3b82f6;
+    color: var(--accent);
   }
 
   .column-name-edit {
     flex: 1;
     font-size: 14px;
     font-weight: 700;
-    color: #1e293b;
-    border: 1px solid #3b82f6;
+    color: var(--text-primary);
+    border: 1px solid var(--accent);
     border-radius: 4px;
     padding: 4px 8px;
     outline: none;
-    background: #ffffff;
+    background: var(--input-bg);
     font-family: inherit;
     text-transform: uppercase;
   }
 
   .column-name-edit:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .task-count {
     font-size: 12px;
     font-weight: 600;
-    color: #64748b;
-    background: #e2e8f0;
+    color: var(--text-muted);
+    background: var(--bg-surface-emphasis);
     padding: 1px 8px;
     border-radius: 10px;
     min-width: 16px;
@@ -347,7 +347,7 @@
   .column-delete-btn {
     border: none;
     background: transparent;
-    color: #94a3b8;
+    color: var(--text-faint);
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
@@ -368,8 +368,8 @@
   }
 
   .column-delete-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
+    background: var(--danger-soft);
+    color: var(--danger);
   }
 
   .column-body {
@@ -386,7 +386,7 @@
     background: transparent;
   }
   .column-body::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--border-strong);
     border-radius: 2px;
   }
 
@@ -394,7 +394,7 @@
     width: 100%;
     border: none;
     background: transparent;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 13px;
     font-weight: 500;
     padding: 8px 0;
@@ -406,43 +406,43 @@
   }
 
   .add-task-btn:hover {
-    color: #3b82f6;
-    background: #e2e8f0;
+    color: var(--accent);
+    background: var(--bg-surface-emphasis);
     padding-left: 8px;
   }
 
   .add-task-form {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
   }
 
   .add-task-input {
     width: 100%;
     font-size: 13px;
-    color: #1e293b;
-    border: 1px solid #e2e8f0;
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
     border-radius: 6px;
     padding: 6px 8px;
     outline: none;
-    background: #f8fafc;
+    background: var(--input-bg-subtle);
     box-sizing: border-box;
     font-family: inherit;
     transition: border-color 0.15s ease;
   }
 
   .add-task-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .add-task-input::placeholder {
-    color: #94a3b8;
+    color: var(--text-faint);
   }
 
   .add-task-actions {
@@ -462,21 +462,21 @@
   }
 
   .btn-primary {
-    background: #3b82f6;
-    color: #ffffff;
+    background: var(--accent);
+    color: var(--accent-contrast);
   }
 
   .btn-primary:hover {
-    background: #2563eb;
+    background: var(--accent-hover);
   }
 
   .btn-cancel {
-    background: #e2e8f0;
-    color: #475569;
+    background: var(--bg-surface-emphasis);
+    color: var(--text-secondary);
   }
 
   .btn-cancel:hover {
-    background: #cbd5e1;
+    background: var(--bg-surface-hover);
   }
 
   .add-column-area {
@@ -485,9 +485,9 @@
 
   .add-column-btn {
     width: 280px;
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed var(--border-strong);
     background: transparent;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 14px;
     font-weight: 600;
     padding: 16px;
@@ -499,14 +499,14 @@
   }
 
   .add-column-btn:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
-    background: #eff6ff;
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--bg-surface-info);
   }
 
   .add-column-form {
     width: 280px;
-    background: #f1f5f9;
+    background: var(--bg-surface-muted);
     border-radius: 12px;
     padding: 12px;
     display: flex;
@@ -518,19 +518,19 @@
     width: 100%;
     font-size: 14px;
     font-weight: 600;
-    color: #1e293b;
-    border: 1px solid #e2e8f0;
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
     border-radius: 6px;
     padding: 8px 10px;
     outline: none;
-    background: #ffffff;
+    background: var(--input-bg);
     box-sizing: border-box;
     font-family: inherit;
   }
 
   .add-column-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .add-column-actions {

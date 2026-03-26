@@ -186,7 +186,7 @@
   }
 
   .description {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin: 0 0 1rem 0;
     line-height: 1.5;
@@ -203,12 +203,12 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.25rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-default);
     transition: background-color 0.15s ease;
   }
 
   .todo-item:hover {
-    background-color: #fafafa;
+    background-color: var(--bg-surface-inset);
   }
 
   .todo-item.done {
@@ -236,14 +236,15 @@
   .checkmark {
     width: 18px;
     height: 18px;
-    border: 2px solid #d1d5db;
+    border: 2px solid var(--input-border);
     border-radius: 4px;
+    background-color: var(--input-bg);
     transition: all 0.15s ease;
   }
 
   .checkbox-wrapper input:checked ~ .checkmark {
-    background-color: #3b82f6;
-    border-color: #3b82f6;
+    background-color: var(--accent);
+    border-color: var(--accent);
   }
 
   .checkbox-wrapper input:checked ~ .checkmark::after {
@@ -253,13 +254,13 @@
     top: 2px;
     width: 5px;
     height: 10px;
-    border: solid #fff;
+    border: solid var(--accent-contrast);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
   }
 
   .checkbox-wrapper:hover .checkmark {
-    border-color: #9ca3af;
+    border-color: var(--border-strong);
   }
 
   .todo-text {
@@ -269,32 +270,37 @@
     border-radius: 3px;
     font-size: 0.95rem;
     line-height: 1.4;
+    color: var(--text-primary);
   }
 
   .todo-text:hover {
-    background-color: #f3f4f6;
+    background-color: var(--bg-surface-muted);
   }
 
   .todo-text.strikethrough {
     text-decoration: line-through;
+    color: var(--text-muted);
   }
 
   .edit-input {
     flex: 1;
     font-size: 0.95rem;
     padding: 0.2rem 0.35rem;
-    border: 1px solid #3b82f6;
+    border: 1px solid var(--accent);
     border-radius: 3px;
     outline: none;
     line-height: 1.4;
     font-family: inherit;
+    color: var(--text-primary);
+    background: var(--input-bg);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .delete-btn {
     opacity: 0;
     background: none;
     border: none;
-    color: #ef4444;
+    color: var(--danger);
     font-size: 1.2rem;
     cursor: pointer;
     padding: 0.1rem 0.4rem;
@@ -309,7 +315,7 @@
   }
 
   .delete-btn:hover {
-    background-color: #fee2e2;
+    background-color: var(--danger-soft);
   }
 
   .add-todo {
@@ -322,26 +328,29 @@
   .add-input {
     flex: 1;
     padding: 0.45rem 0.6rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--input-border);
     border-radius: 5px;
     font-size: 0.9rem;
     font-family: inherit;
     outline: none;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    color: var(--text-primary);
+    background: var(--input-bg);
   }
 
   .add-input:focus {
-    border-color: #93c5fd;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .add-input::placeholder {
-    color: #9ca3af;
+    color: var(--text-faint);
   }
 
   .add-btn {
     padding: 0.45rem 1rem;
-    background-color: #3b82f6;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--accent-contrast);
     border: none;
     border-radius: 5px;
     font-size: 0.9rem;
@@ -351,7 +360,7 @@
   }
 
   .add-btn:hover:not(:disabled) {
-    background-color: #2563eb;
+    background-color: var(--accent-hover);
   }
 
   .add-btn:disabled {
@@ -363,8 +372,8 @@
     display: inline-block;
     font-size: 0.75rem;
     font-weight: 600;
-    background: #ede9fe;
-    color: #7c3aed;
+    background: var(--assignee-bg);
+    color: var(--assignee-text);
     padding: 1px 8px;
     border-radius: 10px;
     cursor: pointer;
@@ -374,23 +383,26 @@
   }
 
   .assignee-badge:hover {
-    background: #ddd6fe;
+    background: var(--assignee-bg-hover);
   }
 
   .assignee-input {
     width: 100px;
     font-size: 0.8rem;
     padding: 1px 6px;
-    border: 1px solid #7c3aed;
+    border: 1px solid var(--assignee-text);
     border-radius: 3px;
     outline: none;
     font-family: inherit;
     flex-shrink: 0;
+    color: var(--text-primary);
+    background: var(--input-bg);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .add-assignee {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-faint);
     cursor: pointer;
     transition: color 0.15s ease, opacity 0.15s ease;
     opacity: 0;
@@ -403,7 +415,7 @@
   }
 
   .add-assignee:hover {
-    color: #7c3aed;
+    color: var(--assignee-text);
   }
 
   .assignee-add-input {

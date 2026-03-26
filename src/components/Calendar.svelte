@@ -20,14 +20,14 @@
 
   // A small palette to assign consistent colors to milestone IDs
   const BADGE_COLORS = [
-    { bg: '#eff6ff', text: '#2563eb', border: '#bfdbfe' },
-    { bg: '#f0fdf4', text: '#16a34a', border: '#bbf7d0' },
-    { bg: '#fef3c7', text: '#d97706', border: '#fde68a' },
-    { bg: '#fdf2f8', text: '#db2777', border: '#fbcfe8' },
-    { bg: '#f5f3ff', text: '#7c3aed', border: '#ddd6fe' },
-    { bg: '#ecfeff', text: '#0891b2', border: '#a5f3fc' },
-    { bg: '#fff7ed', text: '#ea580c', border: '#fed7aa' },
-    { bg: '#fef2f2', text: '#dc2626', border: '#fecaca' },
+    { bg: 'var(--calendar-chip-1-bg)', text: 'var(--calendar-chip-1-text)', border: 'var(--calendar-chip-1-border)' },
+    { bg: 'var(--calendar-chip-2-bg)', text: 'var(--calendar-chip-2-text)', border: 'var(--calendar-chip-2-border)' },
+    { bg: 'var(--calendar-chip-3-bg)', text: 'var(--calendar-chip-3-text)', border: 'var(--calendar-chip-3-border)' },
+    { bg: 'var(--calendar-chip-4-bg)', text: 'var(--calendar-chip-4-text)', border: 'var(--calendar-chip-4-border)' },
+    { bg: 'var(--calendar-chip-5-bg)', text: 'var(--calendar-chip-5-text)', border: 'var(--calendar-chip-5-border)' },
+    { bg: 'var(--calendar-chip-6-bg)', text: 'var(--calendar-chip-6-text)', border: 'var(--calendar-chip-6-border)' },
+    { bg: 'var(--calendar-chip-7-bg)', text: 'var(--calendar-chip-7-text)', border: 'var(--calendar-chip-7-border)' },
+    { bg: 'var(--calendar-chip-8-bg)', text: 'var(--calendar-chip-8-text)', border: 'var(--calendar-chip-8-border)' },
   ];
 
   function getColorForId(id) {
@@ -167,7 +167,7 @@
 
   .empty-message {
     text-align: center;
-    color: #64748b;
+    color: var(--text-muted);
     padding: 40px 20px;
     font-size: 0.9rem;
   }
@@ -179,16 +179,17 @@
   }
 
   .month-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 16px;
+    box-shadow: var(--shadow-sm);
   }
 
   .month-heading {
     font-size: 1rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
     margin-bottom: 12px;
     text-align: center;
   }
@@ -203,15 +204,15 @@
     text-align: center;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #64748b;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     padding: 6px 2px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-default);
   }
 
   .day-header.weekend-header {
-    color: #94a3b8;
+    color: var(--text-faint);
   }
 
   .day-cell {
@@ -221,7 +222,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-default);
   }
 
   .day-cell.empty-cell {
@@ -229,24 +230,24 @@
   }
 
   .day-cell.weekend-cell {
-    background: #f8fafc;
+    background: var(--bg-surface-subtle);
   }
 
   .day-cell.today-cell {
-    background: #eff6ff;
+    background: var(--bg-surface-info);
     border-radius: 4px;
   }
 
   .day-number {
     font-size: 0.8rem;
-    color: #475569;
+    color: var(--text-secondary);
     line-height: 1;
     margin-bottom: 2px;
   }
 
   .day-number.today-number {
     font-weight: 700;
-    color: #2563eb;
+    color: var(--accent);
   }
 
   .milestone-badge {
@@ -268,11 +269,11 @@
 
   .milestone-badge:hover {
     opacity: 0.85;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-sm);
   }
 
   .milestone-badge:focus {
-    outline: 2px solid #2563eb;
+    outline: 2px solid var(--accent);
     outline-offset: 1px;
   }
 

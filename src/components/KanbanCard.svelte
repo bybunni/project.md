@@ -199,24 +199,24 @@
 <style>
   .kanban-card {
     position: relative;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
     cursor: grab;
     transition: box-shadow 0.15s ease, opacity 0.15s ease;
     user-select: none;
   }
 
   .kanban-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-md);
   }
 
   .kanban-card:active {
     cursor: grabbing;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    box-shadow: var(--shadow-lg);
   }
 
   .kanban-card.done {
@@ -231,7 +231,7 @@
     height: 22px;
     border: none;
     background: transparent;
-    color: #94a3b8;
+    color: var(--text-faint);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
@@ -249,8 +249,8 @@
   }
 
   .delete-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
+    background: var(--danger-soft);
+    color: var(--danger);
   }
 
   .card-header {
@@ -265,15 +265,15 @@
     font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
     font-size: 11px;
     font-weight: 600;
-    background: #e2e8f0;
-    color: #475569;
+    background: var(--id-badge-bg);
+    color: var(--id-badge-text);
     padding: 2px 6px;
     border-radius: 4px;
     letter-spacing: 0.02em;
   }
 
   .done-check {
-    color: #22c55e;
+    color: var(--success);
     font-size: 14px;
     font-weight: 700;
   }
@@ -285,7 +285,7 @@
   .title-text {
     font-size: 14px;
     font-weight: 500;
-    color: #1e293b;
+    color: var(--text-primary);
     line-height: 1.4;
     cursor: text;
     display: block;
@@ -293,30 +293,30 @@
   }
 
   .title-text:hover {
-    color: #3b82f6;
+    color: var(--accent);
   }
 
   .title-text.strikethrough {
     text-decoration: line-through;
-    color: #94a3b8;
+    color: var(--text-faint);
   }
 
   .inline-edit {
     width: 100%;
     font-size: 14px;
     font-weight: 500;
-    color: #1e293b;
-    border: 1px solid #3b82f6;
+    color: var(--text-primary);
+    border: 1px solid var(--accent);
     border-radius: 4px;
     padding: 4px 6px;
     outline: none;
-    background: #f8fafc;
+    background: var(--input-bg-subtle);
     box-sizing: border-box;
     font-family: inherit;
   }
 
   .inline-edit:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .milestone-edit {
@@ -334,8 +334,8 @@
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
-    background: #dbeafe;
-    color: #2563eb;
+    background: var(--milestone-bg);
+    color: var(--milestone-text);
     padding: 2px 8px;
     border-radius: 10px;
     cursor: pointer;
@@ -344,26 +344,26 @@
   }
 
   .milestone-badge:hover {
-    background: #bfdbfe;
+    background: var(--milestone-bg-hover);
   }
 
   .add-milestone {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--text-faint);
     cursor: pointer;
     transition: color 0.15s ease;
   }
 
   .add-milestone:hover {
-    color: #3b82f6;
+    color: var(--accent);
   }
 
   .assignee-badge {
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
-    background: #ede9fe;
-    color: #7c3aed;
+    background: var(--assignee-bg);
+    color: var(--assignee-text);
     padding: 2px 8px;
     border-radius: 10px;
     cursor: pointer;
@@ -372,7 +372,7 @@
   }
 
   .assignee-badge:hover {
-    background: #ddd6fe;
+    background: var(--assignee-bg-hover);
   }
 
   .assignee-edit {
@@ -383,7 +383,7 @@
 
   .add-assignee {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--text-faint);
     cursor: pointer;
     transition: color 0.15s ease;
     opacity: 0;
@@ -394,6 +394,6 @@
   }
 
   .add-assignee:hover {
-    color: #7c3aed;
+    color: var(--assignee-text);
   }
 </style>

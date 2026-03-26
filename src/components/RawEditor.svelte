@@ -97,7 +97,7 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-primary);
   }
 
   .toolbar-actions {
@@ -112,21 +112,21 @@
   }
 
   .status-saving {
-    color: #6b7280;
+    color: var(--text-muted);
   }
 
   .status-saved {
-    color: #10b981;
+    color: var(--success-strong);
   }
 
   .status-error {
-    color: #ef4444;
+    color: var(--danger-strong);
   }
 
   .save-btn {
     padding: 0.45rem 1.25rem;
-    background-color: #3b82f6;
-    color: #fff;
+    background-color: var(--accent);
+    color: var(--accent-contrast);
     border: none;
     border-radius: 5px;
     font-size: 0.9rem;
@@ -137,7 +137,7 @@
   }
 
   .save-btn:hover:not(:disabled) {
-    background-color: #2563eb;
+    background-color: var(--accent-hover);
   }
 
   .save-btn:disabled {
@@ -150,7 +150,7 @@
     align-items: center;
     justify-content: center;
     min-height: 500px;
-    color: #9ca3af;
+    color: var(--text-faint);
     font-size: 0.95rem;
   }
 
@@ -161,27 +161,28 @@
     font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Monaco', monospace;
     font-size: 0.875rem;
     line-height: 1.6;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     resize: vertical;
     outline: none;
-    color: #1f2937;
-    background-color: #fafafa;
+    color: var(--text-primary);
+    background-color: var(--input-bg-subtle);
     tab-size: 2;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
     box-sizing: border-box;
   }
 
   .editor-textarea:focus {
-    border-color: #93c5fd;
-    background-color: #fff;
+    border-color: var(--accent);
+    background-color: var(--input-bg);
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 
   .shortcut-hint {
     margin-top: 0.5rem;
     text-align: right;
     font-size: 0.78rem;
-    color: #9ca3af;
+    color: var(--text-faint);
   }
 
   kbd {
@@ -189,9 +190,9 @@
     padding: 0.1rem 0.35rem;
     font-size: 0.72rem;
     font-family: inherit;
-    color: #6b7280;
-    background-color: #f3f4f6;
-    border: 1px solid #e5e7eb;
+    color: var(--text-muted);
+    background-color: var(--kbd-bg);
+    border: 1px solid var(--border-default);
     border-radius: 3px;
   }
 </style>
