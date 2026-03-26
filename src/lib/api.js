@@ -16,6 +16,10 @@ export async function openProject() {
   return getRuntime().openProject();
 }
 
+export async function createProject() {
+  return getRuntime().createProject();
+}
+
 // Check if a project is currently loaded
 export async function fetchStatus() {
   return getRuntime().getStatus();

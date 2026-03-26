@@ -4,6 +4,7 @@ import { CHANNELS } from './channels.js';
 
 const api = {
   openProject: () => ipcRenderer.invoke(CHANNELS.openProject),
+  createProject: () => ipcRenderer.invoke(CHANNELS.createProject),
   getStatus: () => ipcRenderer.invoke(CHANNELS.getStatus),
   getProject: () => ipcRenderer.invoke(CHANNELS.getProject),
   getRaw: () => ipcRenderer.invoke(CHANNELS.getRaw),

@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { fetchProject, fetchStatus, openProject, listenForChanges } from './lib/api.js';
+  import { fetchProject, fetchStatus, openProject, createProject, listenForChanges } from './lib/api.js';
   import Milestones from './components/Milestones.svelte';
   import Kanban from './components/Kanban.svelte';
   import Calendar from './components/Calendar.svelte';
@@ -13,7 +13,7 @@
   let eventSource;
   let projectLoaded = false;
   let filename = null;
-  let opening = false;
+  let actionState = null;
 
   const defaultSectionOrder = ['todos', 'kanban', 'calendar', 'milestones'];
   let sectionOrder = JSON.parse(localStorage.getItem('dashboardOrder') || 'null') || [...defaultSectionOrder];
@@ -78,21 +78,39 @@
     eventSource = listenForChanges(() => loadData());
   }
 
+  function applyLoadedProject(result) {
+    projectLoaded = true;
+    filename = result.path ? result.path.split('/').pop() : null;
+    data = result.data;
+    error = null;
+    connectSSE();
+  }
+
   async function handleOpen() {
-    opening = true;
+    actionState = 'opening';
     try {
       const result = await openProject();
       if (result.cancelled) return;
       if (result.error) { error = result.error; return; }
-      projectLoaded = true;
-      filename = result.path ? result.path.split('/').pop() : null;
-      data = result.data;
-      error = null;
-      connectSSE();
+      applyLoadedProject(result);
     } catch (e) {
       error = e.message;
     } finally {
-      opening = false;
+      actionState = null;
+    }
+  }
+
+  async function handleCreate() {
+    actionState = 'creating';
+    try {
+      const result = await createProject();
+      if (result.cancelled) return;
+      if (result.error) { error = result.error; return; }
+      applyLoadedProject(result);
+    } catch (e) {
+      error = e.message;
+    } finally {
+      actionState = null;
     }
   }
 
@@ -120,10 +138,15 @@
     <div class="landing">
       <div class="landing-card">
         <h1>project.md</h1>
-        <p>Open a markdown project file to get started.</p>
-        <button class="open-btn" on:click={handleOpen} disabled={opening}>
-          {opening ? 'Opening...' : 'Open Project'}
-        </button>
+        <p>Open a markdown project file or start a new one from a starter template.</p>
+        <div class="landing-actions">
+          <button class="open-btn secondary" on:click={handleCreate} disabled={actionState !== null}>
+            {actionState === 'creating' ? 'Creating...' : 'New Project'}
+          </button>
+          <button class="open-btn" on:click={handleOpen} disabled={actionState !== null}>
+            {actionState === 'opening' ? 'Opening...' : 'Open Project'}
+          </button>
+        </div>
       </div>
     </div>
   {:else}
@@ -135,9 +158,14 @@
             <span class="filename">{filename}</span>
           {/if}
         </div>
-        <button class="load-btn" on:click={handleOpen} disabled={opening}>
-          {opening ? 'Opening...' : 'Load File'}
-        </button>
+        <div class="header-actions">
+          <button class="load-btn secondary" on:click={handleCreate} disabled={actionState !== null}>
+            {actionState === 'creating' ? 'Creating...' : 'New Project'}
+          </button>
+          <button class="load-btn" on:click={handleOpen} disabled={actionState !== null}>
+            {actionState === 'opening' ? 'Opening...' : 'Load File'}
+          </button>
+        </div>
       </div>
       <nav>
         {#each tabs as tab}
@@ -240,6 +268,12 @@
     color: #666;
     margin-bottom: 24px;
   }
+  .landing-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .open-btn {
     padding: 10px 24px;
     font-size: 1rem;
@@ -258,6 +292,14 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+  .open-btn.secondary {
+    background: white;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+  .open-btn.secondary:hover:not(:disabled) {
+    background: #eff6ff;
+  }
   /* Header */
   header {
     margin-bottom: 24px;
@@ -271,6 +313,10 @@
   h1 {
     font-size: 1.5rem;
     color: #1a1a1a;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
   }
   .filename {
     font-size: 0.8rem;
@@ -292,6 +338,14 @@
   .load-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+  .load-btn.secondary {
+    background: white;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+  .load-btn.secondary:hover:not(:disabled) {
+    background: #eff6ff;
   }
   nav {
     display: flex;

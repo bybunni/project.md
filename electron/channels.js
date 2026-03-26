@@ -1,5 +1,6 @@
 export const CHANNELS = {
   openProject: 'project-md:open-project',
+  createProject: 'project-md:create-project',
   getStatus: 'project-md:get-status',
   getProject: 'project-md:get-project',
   getRaw: 'project-md:get-raw',

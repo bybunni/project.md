@@ -82,6 +82,54 @@ describe('registerProjectIpc', () => {
     assert.deepStrictEqual(sentChannels, []);
   });
 
+  it('returns cancelled when the create project save dialog is dismissed', async () => {
+    const service = new ProjectDocumentService();
+    cleanups.push(() => service.dispose());
+
+    const ipcMain = createFakeIpcMain();
+    const dialog = {
+      showOpenDialog: async () => ({ canceled: true, filePaths: [] }),
+      showSaveDialog: async () => ({ canceled: true }),
+    };
+
+    const unregister = registerProjectIpc({
+      ipcMain,
+      dialog,
+      service,
+      getWindows: () => [],
+    });
+    cleanups.push(unregister);
+
+    const result = await ipcMain.handlers.get(CHANNELS.createProject)({});
+    assert.deepStrictEqual(result, { cancelled: true });
+  });
+
+  it('creates and loads a starter project through IPC', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'project-md-ipc-create-'));
+    const filePath = path.join(directory, 'project.md');
+    const service = new ProjectDocumentService();
+    cleanups.push(() => service.dispose());
+
+    const ipcMain = createFakeIpcMain();
+    const dialog = {
+      showOpenDialog: async () => ({ canceled: false, filePaths: [filePath] }),
+      showSaveDialog: async () => ({ canceled: false, filePath }),
+    };
+
+    const unregister = registerProjectIpc({
+      ipcMain,
+      dialog,
+      service,
+      getWindows: () => [],
+    });
+    cleanups.push(unregister);
+
+    const result = await ipcMain.handlers.get(CHANNELS.createProject)({});
+    assert.strictEqual(result.path, filePath);
+    assert.strictEqual(result.data.title, 'New Project');
+    assert.deepStrictEqual(result.data.kanban.columns.map((column) => column.name), ['Backlog', 'In Progress', 'Done']);
+  });
+
   it('broadcasts the change channel when the open file changes externally', async () => {
     const filePath = makeTempProject();
     const service = new ProjectDocumentService();

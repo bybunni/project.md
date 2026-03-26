@@ -57,6 +57,48 @@ describe('ProjectDocumentService', () => {
     });
   });
 
+  it('creates a starter project file with the required sections and examples', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'project-md-new-'));
+    const filePath = path.join(directory, 'starter-project.md');
+    const service = createService();
+
+    const result = await service.createProject(filePath);
+    const content = fs.readFileSync(filePath, 'utf-8');
+
+    assert.strictEqual(result.path, filePath);
+    assert.strictEqual(result.data.title, 'New Project');
+    assert.strictEqual(result.data.milestones.length, 1);
+    assert.deepStrictEqual(result.data.kanban.columns.map((column) => column.name), ['Backlog', 'In Progress', 'Done']);
+    assert.strictEqual(result.data.kanban.columns[0].tasks.length, 1);
+    assert.strictEqual(result.data.todos.items.length, 1);
+    assert.match(content, /^# Project: New Project/m);
+    assert.match(content, /^## Milestones$/m);
+    assert.match(content, /^## Kanban$/m);
+    assert.match(content, /^## Calendar$/m);
+    assert.match(content, /^## Todos$/m);
+  });
+
+  it('starts watching a newly created project file', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'project-md-new-watch-'));
+    const filePath = path.join(directory, 'project.md');
+    const service = createService();
+    await service.createProject(filePath);
+    await waitForWatchReady();
+
+    const changed = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('Timed out waiting for starter project change')), 2500);
+      service.once('changed', () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+
+    fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf-8').replace('New Project', 'Updated Starter Project'), 'utf-8');
+    await changed;
+
+    assert.strictEqual(service.getProject().title, 'Updated Starter Project');
+  });
+
   it('persists structured mutations back to the markdown file', async () => {
     const filePath = makeTempProject();
     const service = createService();

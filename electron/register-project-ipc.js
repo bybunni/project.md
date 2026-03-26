@@ -33,6 +33,19 @@ export function registerProjectIpc({
     return service.openProject(result.filePaths[0]);
   }));
 
+  ipcMain.handle(CHANNELS.createProject, withErrorBoundary(async () => {
+    const result = await dialog.showSaveDialog({
+      defaultPath: 'project.md',
+      filters: OPEN_DIALOG_FILTERS,
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { cancelled: true };
+    }
+
+    return service.createProject(result.filePath);
+  }));
+
   ipcMain.handle(CHANNELS.getStatus, withErrorBoundary(() => service.getStatus()));
   ipcMain.handle(CHANNELS.getProject, withErrorBoundary(() => service.getProject()));
   ipcMain.handle(CHANNELS.getRaw, withErrorBoundary(() => service.getRaw()));
